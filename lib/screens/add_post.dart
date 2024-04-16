@@ -1,22 +1,21 @@
 import 'dart:io';
 
-import 'package:agri_tech/models/market_items.dart';
+import 'package:agri_tech/models/community.dart';
 import 'package:agri_tech/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AddProduct extends StatefulWidget {
-  const AddProduct({super.key});
+class AddPost extends StatefulWidget {
+  const AddPost({super.key});
 
   @override
-  State<AddProduct> createState() => _AddProductState();
+  State<AddPost> createState() => _AddPostState();
 }
 
-class _AddProductState extends State<AddProduct> {
+class _AddPostState extends State<AddPost> {
   File? image;
 
-  TextEditingController titleController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
+  TextEditingController captionController = TextEditingController();
 
   Future<void> getImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -39,7 +38,7 @@ class _AddProductState extends State<AddProduct> {
           backgroundColor: Colors.green[50],
           automaticallyImplyLeading: false,
           title: scaffoldtext(
-            'Add Product',
+            'Add Post',
           ),
           leading: IconButton(
             icon: const Icon(
@@ -56,26 +55,12 @@ class _AddProductState extends State<AddProduct> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               mytext(
-                'Product Name:',
+                'Caption:',
               ),
               TextField(
-                controller: titleController,
+                controller: captionController,
                 decoration: InputDecoration(
-                  hintText: 'Enter product name',
-                  hintStyle: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[700],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              mytext(
-                'Price:',
-              ),
-              TextField(
-                controller: priceController,
-                decoration: InputDecoration(
-                  hintText: 'Enter price e.g ksh.100',
+                  hintText: 'Enter caption',
                   hintStyle: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[700],
@@ -120,37 +105,31 @@ class _AddProductState extends State<AddProduct> {
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   onPressed: () {
-                    final productName = titleController.text;
-                    final productPrice = priceController.text;
+                    final caption = captionController.text;
                     File? selectedImage = image;
-                    if (image == null ||
-                        titleController.text.isEmpty ||
-                        priceController.text.isEmpty) {
+                    if (image == null || captionController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         mySnackBar("Please Fill all fields!"),
                       );
                     } else {
                       Navigator.pop(
                           context,
-                          Items(
-                            img: selectedImage!.path,
-                            title: productName,
-                            price: productPrice,
+                          CommunityPost(
+                            imgUrl: selectedImage!.path,
+                            caption: caption,
                           ));
                       ScaffoldMessenger.of(context).showSnackBar(
-                        mySnackBar("Product Added!"),
+                        mySnackBar("Post Added to community!"),
                       );
-                      titleController.clear();
-                      priceController.clear();
+                      captionController.clear();
                     }
-                    
                   },
                   icon: const Icon(
-                    Icons.agriculture_rounded,
+                    Icons.post_add_rounded,
                     color: Colors.grey,
                     size: 20,
                   ),
-                  label: mytext("Add Product"),
+                  label: mytext("Add Post"),
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all(
                       RoundedRectangleBorder(

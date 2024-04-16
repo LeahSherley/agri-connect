@@ -2,6 +2,7 @@ import 'package:agri_tech/models/news_articles.dart';
 import 'package:agri_tech/models/products.dart';
 import 'package:agri_tech/screens/main_drawer.dart';
 import 'package:agri_tech/screens/market_place.dart';
+import 'package:agri_tech/screens/notification_list.dart';
 import 'package:agri_tech/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -61,6 +62,23 @@ class _HomeState extends State<Home> {
       price: 'Ksh. 15,000',
     ),
   ];
+  late List<NewsArticles> filteredArticles;
+
+  void filterArticles(String query) {
+    setState(() {
+      filteredArticles = articles
+          .where((article) =>
+              article.title.toLowerCase().contains(query.toLowerCase()) ||
+              article.description.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    filteredArticles = articles;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,10 +104,13 @@ class _HomeState extends State<Home> {
             color: Colors.green[700],
           ),
         ),
-        
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) => const NotificationList(),
+              ));
+            },
             icon: Icon(
               Icons.notifications,
               size: 30,
@@ -144,6 +165,7 @@ class _HomeState extends State<Home> {
                           Icons.search_rounded,
                           color: Colors.grey,
                         ),
+                        filterArticles,
                       )),
                 ],
               ),
@@ -194,7 +216,7 @@ class _HomeState extends State<Home> {
                   ),
                   const SizedBox(height: 10),
                   SizedBox(
-                    height: 155,
+                    height: 160,
                     child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: products.length,
@@ -207,15 +229,15 @@ class _HomeState extends State<Home> {
                                 borderRadius: BorderRadius.circular(10),
                                 gradient: LinearGradient(
                                   colors: [
-                                    Colors.green[200]!,
-                                    Colors.green[400]!,
+                                    Colors.green[100]!,
+                                    Colors.green[300]!,
                                   ],
                                   begin: Alignment.bottomRight,
                                   end: Alignment.topLeft,
                                 ),
                               ),
                               margin: const EdgeInsets.only(right: 16),
-                              width: 120,
+                              width: 145,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -245,6 +267,7 @@ class _HomeState extends State<Home> {
                                     padding: const EdgeInsets.only(
                                       left: 8.0,
                                       top: 3.0,
+                                      bottom: 5.0,
                                     ),
                                     child: Text(
                                       product.price,
@@ -253,18 +276,45 @@ class _HomeState extends State<Home> {
                                       ),
                                     ),
                                   ),
-                                  IconButton(
-                                      onPressed: () {
-                                        // addToCart(widget.items);
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          mySnackBar("Added to Cart!"),
-                                        );
-                                      },
-                                      icon: const Icon(
-                                        Icons.add_shopping_cart,
-                                        size: 20,
-                                      )),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 40,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 8.0,
+                                        top: 8.0,
+                                        right: 8.0,
+                                      ),
+                                      child: OutlinedButton.icon(
+                                          onPressed: () {
+                                            
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              mySnackBar("Added to Cart!"),
+                                            );
+                                          },
+                                          icon: Icon(
+                                            Icons.add_shopping_cart,
+                                            size: 15,
+                                            color: Colors.grey[700],
+                                          ),
+                                          style: ButtonStyle(
+                                              shape: MaterialStateProperty.all(
+                                                  RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ))),
+                                          label: Text(
+                                            "Add to cart",
+                                            style: TextStyle(
+                                              fontSize: 9,
+                                              color: Colors.grey[700],
+                                            ),
+                                          )),
+                                    ),
+                                    
+                                  ),
+                                  
                                 ],
                               ),
                             ),
@@ -340,6 +390,7 @@ class _HomeState extends State<Home> {
                                     ),
                                   ),
                                 ),
+                                
                               ],
                             ),
                           ),

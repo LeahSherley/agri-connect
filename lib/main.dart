@@ -1,9 +1,12 @@
 import 'package:agri_tech/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -11,22 +14,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-            useMaterial3: true,
-          
-            colorScheme: ColorScheme.fromSeed(
+    return ProviderScope(
+      child: MaterialApp(
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.green,
             primary: Colors.green,
           ),
-            textTheme: GoogleFonts.gentiumPlusTextTheme(
-              Theme.of(context).textTheme,
-            ),
-            
-            brightness: Brightness.light,
+          textTheme: GoogleFonts.gentiumPlusTextTheme(
+            Theme.of(context).textTheme,
           ),
-      debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
+          brightness: Brightness.light,
+        ),
+        debugShowCheckedModeBanner: false,
+        home: const SplashScreen(),
+      ),
     );
   }
 }

@@ -1,5 +1,4 @@
 class FeaturedProducts {
-  
   final String img;
   final String title;
   final String price;

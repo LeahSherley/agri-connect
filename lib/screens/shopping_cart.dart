@@ -1,23 +1,28 @@
 import 'package:agri_tech/models/cart_items.dart';
+import 'package:agri_tech/providers/shopping_cart.dart';
 import 'package:agri_tech/screens/home_screen.dart';
 import 'package:agri_tech/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ShoppingCart extends StatefulWidget {
+class ShoppingCart extends ConsumerStatefulWidget {
   const ShoppingCart({super.key, required this.cartItems});
 
   final List<CartItem> cartItems;
+  
 
   @override
-  State<ShoppingCart> createState() => _ShoppingCartState();
+  ConsumerState<ShoppingCart> createState() => _ShoppingCartState();
 }
 
-class _ShoppingCartState extends State<ShoppingCart> {
-  void removeCart(CartItem itemToRemove) {
+class _ShoppingCartState extends ConsumerState<ShoppingCart> {
+
+  /*void removeCart(CartItem itemToRemove) {
     setState(() {
-      widget.cartItems.removeWhere((item) => item == itemToRemove);
+      widget.cartItems
+          .removeWhere((item) => item.items.id == itemToRemove.items.id);
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -62,22 +67,32 @@ class _ShoppingCartState extends State<ShoppingCart> {
                       )),
                   title: Text(
                     product.items.title,
-                    style: TextStyle(color: Colors.green[800],fontSize: 12,),
+                    style: TextStyle(
+                      color: Colors.green[800],
+                      fontSize: 12,
+                    ),
                   ),
                   subtitle: Text(
                     product.items.price,
-                    style: TextStyle(color: Colors.green[200], fontSize:11,),
+                    style: TextStyle(
+                      color: Colors.green[200],
+                      fontSize: 11,
+                    ),
                   ),
                   trailing: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('Quantity: ${product.quantity}', ),
+                      Text(
+                        'Quantity: ${product.quantity}',
+                      ),
                       IconButton(
                           onPressed: () {
-                            removeCart(product);
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(mySnackBar("Removed from cart!"));
+                            //removeCart(product);
+                            ref.read(shoppingCartProvider.notifier)
+                             .removeCart(product.items);
+                            ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
+                                "${product.items.title} removed from cart!"));
                           },
                           icon: const Icon(Icons.delete_outline_rounded,
                               size: 20)),

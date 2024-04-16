@@ -1,9 +1,11 @@
-import 'package:agri_tech/models/cart_items.dart';
+
 import 'package:agri_tech/models/market_items.dart';
+import 'package:agri_tech/providers/shopping_cart.dart';
 import 'package:agri_tech/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MarketItems extends StatefulWidget {
+class MarketItems extends ConsumerStatefulWidget {
   const MarketItems(
       {super.key, required this.items, required this.onSelectedItem});
 
@@ -11,33 +13,15 @@ class MarketItems extends StatefulWidget {
   final void Function() onSelectedItem;
 
   @override
-  State<MarketItems> createState() => _MarketItemsState();
+  ConsumerState<MarketItems> createState() => _MarketItemsState();
 }
 
-class _MarketItemsState extends State<MarketItems> {
-  final List<CartItem> cartItems = [];
-
-  void addToCart(Items items) {
-    final existingItemIndex =
-        cartItems.indexWhere((item) => item.items.id == items.id);
-
-    if (existingItemIndex != -1) {
-      // If item already exists in cart, increase its quantity
-      setState(() {
-        cartItems[existingItemIndex].quantity++;
-      });
-    } else {
-      // If item does not exist in cart, add it as a new item
-      setState(() {
-        cartItems.add(CartItem(items: items));
-        print('Cart items: $cartItems');
-      });
-    }
-  }
-  
+class _MarketItemsState extends ConsumerState<MarketItems> {
+  //final List<CartItem> cartItems = [];
 
   @override
   Widget build(BuildContext context) {
+    //final cartItems = ref.watch(shoppingCartProvider);
     return InkWell(
       borderRadius: BorderRadius.circular(10),
       onTap: widget.onSelectedItem,
@@ -46,8 +30,8 @@ class _MarketItemsState extends State<MarketItems> {
           borderRadius: BorderRadius.circular(10),
           gradient: LinearGradient(
             colors: [
-              Colors.green[200]!,
-              Colors.green[400]!,
+              Colors.green[100]!,
+              Colors.green[300]!,
             ],
             begin: Alignment.bottomRight,
             end: Alignment.topLeft,
@@ -79,7 +63,11 @@ class _MarketItemsState extends State<MarketItems> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 8.0, top: 3.0),
+              padding: const EdgeInsets.only(
+                left: 8.0,
+                top: 3.0,
+                bottom: 10.0,
+              ),
               child: Text(
                 widget.items.price,
                 style: const TextStyle(
@@ -87,17 +75,43 @@ class _MarketItemsState extends State<MarketItems> {
                 ),
               ),
             ),
-            IconButton(
-                onPressed: () {
-                  addToCart(widget.items);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    mySnackBar("Added to Cart!"),
-                  );
-                },
-                icon: const Icon(
-                  Icons.add_shopping_cart,
-                  size: 20,
-                )),
+            SizedBox(
+              height: 40,
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 8.0,
+                  top: 8.0,
+                  right: 8.0,
+                ),
+                child: OutlinedButton.icon(
+                    onPressed: () {
+                      //addToCart(widget.items);
+                      ref
+                          .read(shoppingCartProvider.notifier)
+                          .addToCart(widget.items);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        mySnackBar("${widget.items.title} added to Cart!"),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.add_shopping_cart,
+                      size: 15,
+                      color: Colors.grey[700],
+                    ),
+                    style: ButtonStyle(
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ))),
+                    label: Text(
+                      "Add to cart",
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: Colors.grey[700],
+                      ),
+                    )),
+              ),
+            ),
           ],
         ),
       ),

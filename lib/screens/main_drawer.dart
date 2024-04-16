@@ -1,19 +1,23 @@
 import 'package:agri_tech/models/cart_items.dart';
+import 'package:agri_tech/providers/shopping_cart.dart';
 import 'package:agri_tech/screens/shopping_cart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class MainDrawer extends StatefulWidget {
+class MainDrawer extends ConsumerStatefulWidget {
   const MainDrawer({super.key});
 
   @override
-  State<MainDrawer> createState() => _MainDrawerState();
+  ConsumerState<MainDrawer> createState() => _MainDrawerState();
 }
 
-class _MainDrawerState extends State<MainDrawer> {
-  final List<CartItem> cartItems = [];
+class _MainDrawerState extends ConsumerState<MainDrawer> {
+  //List <CartItem> cartItems = [];
 
   @override
   Widget build(BuildContext context) {
+    final List<CartItem> cartItems = ref.watch(shoppingCartProvider);
     return Drawer(
       elevation: 8.0,
       width: 300.0,
@@ -27,6 +31,8 @@ class _MainDrawerState extends State<MainDrawer> {
               style: TextStyle(
                 fontSize: 11.5,
                 color: Colors.green[100],
+                fontFamily: GoogleFonts.gentiumPlus().fontFamily,
+
               ),
             ),
             accountEmail: Text(
@@ -34,6 +40,7 @@ class _MainDrawerState extends State<MainDrawer> {
               style: TextStyle(
                 fontSize: 11.5,
                 color: Colors.green[100],
+                fontFamily: GoogleFonts.gentiumPlus().fontFamily,
               ),
             ),
             currentAccountPicture: GestureDetector(
@@ -141,7 +148,7 @@ class _MainDrawerState extends State<MainDrawer> {
                 selectionColor: Colors.green,
               ),
               onTap: () {
-                Navigator.pushReplacement(
+                Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) =>  ShoppingCart(

@@ -1,44 +1,43 @@
 import 'package:agri_tech/models/cart_items.dart';
 import 'package:agri_tech/models/market_items.dart';
+import 'package:agri_tech/providers/shopping_cart.dart';
 import 'package:agri_tech/screens/home_screen.dart';
 import 'package:agri_tech/screens/market_items.dart';
 import 'package:agri_tech/screens/shopping_cart.dart';
 import 'package:agri_tech/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MarketPlace extends StatefulWidget {
+class MarketPlace extends ConsumerStatefulWidget {
   const MarketPlace({super.key});
 
   @override
-  State<MarketPlace> createState() => _MarketPlaceState();
+  ConsumerState<MarketPlace> createState() => _MarketPlaceState();
 }
 
-class _MarketPlaceState extends State<MarketPlace> {
+class _MarketPlaceState extends ConsumerState<MarketPlace> {
   TextEditingController searchController = TextEditingController();
   late List<Items> filteredItems;
   List<CartItem> cartItems = [
-  CartItem(
-    items: Items(
-      id: "1",
-      img:
-          'https://www.groundsguys.com/us/en-us/grounds-guys/_assets/expert-tips/Organic-Fertilizer.webp',
-      title: 'Ground Fertilizer',
-      price: 'Ksh. 750',
+   /* CartItem(
+      items: Items(
+        img:
+            'https://www.groundsguys.com/us/en-us/grounds-guys/_assets/expert-tips/Organic-Fertilizer.webp',
+        title: 'Ground Fertilizer',
+        price: 'Ksh. 750',
+      ),
+      quantity: 2,
     ),
-    quantity: 2, 
-  ),
-  CartItem(
-    items: Items(
-      id: "1",
-      img:
-          'https://www.blfarm.com/wp-content/uploads/2018/02/hero-livestock-feed.jpg',
-      title: 'Cattle Feed',
-      price: 'Ksh. 300',
-    ),
-    quantity: 1, 
-  ),
-];
-
+    CartItem(
+      items: Items(
+        img:
+            'https://www.blfarm.com/wp-content/uploads/2018/02/hero-livestock-feed.jpg',
+        title: 'Cattle Feed',
+        price: 'Ksh. 300',
+      ),
+      quantity: 1,
+    ),*/
+  ];
 
   @override
   void initState() {
@@ -57,54 +56,46 @@ class _MarketPlaceState extends State<MarketPlace> {
 
   final List<Items> allitems = [
     Items(
-      id: "1",
       img:
           'https://www.groundsguys.com/us/en-us/grounds-guys/_assets/expert-tips/Organic-Fertilizer.webp',
       title: 'Ground Fertilizer',
       price: 'Ksh. 750',
     ),
     Items(
-      id: "2",
       img:
           'https://www.blfarm.com/wp-content/uploads/2018/02/hero-livestock-feed.jpg',
       title: 'Cattle Feed',
       price: 'Ksh. 300',
     ),
     Items(
-      id: "3",
       img: 'https://agromaster.com/public/images/1606924470-0.jpg',
       title: 'Fertilizer Spreader',
       price: 'Ksh. 15,000',
     ),
     Items(
-      id: "1",
       img:
           'https://www.groundsguys.com/us/en-us/grounds-guys/_assets/expert-tips/Organic-Fertilizer.webp',
       title: 'Ground Fertilizer',
       price: 'Ksh. 750',
     ),
     Items(
-      id: "2",
       img:
           'https://www.blfarm.com/wp-content/uploads/2018/02/hero-livestock-feed.jpg',
       title: 'Cattle Feed',
       price: 'Ksh. 300',
     ),
     Items(
-      id: "3",
       img: 'https://agromaster.com/public/images/1606924470-0.jpg',
       title: 'Fertilizer Spreader',
       price: 'Ksh. 15,000',
     ),
     Items(
-      id: "1",
       img:
           'https://www.groundsguys.com/us/en-us/grounds-guys/_assets/expert-tips/Organic-Fertilizer.webp',
       title: 'Ground Fertilizer',
       price: 'Ksh. 750',
     ),
     Items(
-      id: "2",
       img:
           'https://www.blfarm.com/wp-content/uploads/2018/02/hero-livestock-feed.jpg',
       title: 'Cattle Feed',
@@ -113,6 +104,7 @@ class _MarketPlaceState extends State<MarketPlace> {
   ];
   @override
   Widget build(BuildContext context) {
+    final cartItems = ref.watch(shoppingCartProvider);
     return Scaffold(
       backgroundColor: Colors.green[50],
       appBar: AppBar(
@@ -163,8 +155,9 @@ class _MarketPlaceState extends State<MarketPlace> {
               ),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                mainAxisSpacing: 17,
-                crossAxisSpacing: 17,
+                mainAxisSpacing: 15,
+                crossAxisSpacing: 15,
+                mainAxisExtent: 166,
               ),
               children: [
                 for (final item in filteredItems)
@@ -179,8 +172,7 @@ class _MarketPlaceState extends State<MarketPlace> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print("Cart items length: ${cartItems.length}");
-          Navigator.of(context).pushReplacement<void, void>(
+          Navigator.of(context).push(
             MaterialPageRoute<void>(
                 builder: (BuildContext context) =>
                     ShoppingCart(cartItems: cartItems)),

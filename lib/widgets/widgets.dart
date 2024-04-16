@@ -19,6 +19,13 @@ Widget scaffoldtext(String text) {
         color: Colors.green[300],
       ));
 }
+Widget mytext(String text) {
+  return Text(text,
+      style: TextStyle(
+        fontSize: 13,
+        color: Colors.green[300],
+      ));
+}
 
 Widget search(String hint, TextEditingController con, Icon conss, [void Function(String)? onChanged]) {
   return TextFormField(
