@@ -1,76 +1,58 @@
 import 'dart:convert';
 
+import 'package:agri_tech/models/market_items.dart';
 import 'package:agri_tech/models/news_articles.dart';
 import 'package:agri_tech/models/products.dart';
+import 'package:agri_tech/providers/products.dart';
+import 'package:agri_tech/providers/shopping_cart.dart';
 import 'package:agri_tech/screens/main_drawer.dart';
 import 'package:agri_tech/screens/market_place.dart';
 import 'package:agri_tech/screens/news.dart';
 import 'package:agri_tech/screens/notification_list.dart';
+import 'package:agri_tech/screens/product_details.dart';
 import 'package:agri_tech/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
-class Home extends StatefulWidget {
+class Home extends ConsumerStatefulWidget {
   const Home({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  ConsumerState<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends ConsumerState<Home> {
   final scaffoldkey = GlobalKey<ScaffoldState>();
   TextEditingController searchController = TextEditingController();
   late List<NewsArticles> articles = [];
-  /*List<NewsArticles> articles = [
-    NewsArticles(
-      imageUrl:
-          'https://www.farmafrica.org/images/blogs/juliet-and-goats-kenya.jpg',
-      title: 'News Title 1',
-      description: 'Description of news article 1',
-      author: "Author 5",
-    ),
-    NewsArticles(
-      imageUrl:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA9hGApixKyGfKLQpU3JV1WjU-J9T3XyL86awxO9oKRUejlp5_FzO73iW78BF3ioVfBY4&usqp=CAU',
-      title: 'News Title 2',
-      description: 'Description of news article 2',
-      author: "Author 4",
-    ),
-    NewsArticles(
-      imageUrl:
-          'https://media.licdn.com/dms/image/C5612AQHTZ8u04G8cgg/article-inline_image-shrink_400_744/0/1617441359282?e=1717632000&v=beta&t=RHsE5TfwTrrMX-BB27oH49DlaHEPiDCqmsjYJmYtSuo',
-      title: 'News Title 3',
-      description: 'Description of news article 3',
-      author: "Author 3",
-    ),
-    NewsArticles(
-      imageUrl:
-          'https://www.shutterstock.com/image-photo/tractor-spraying-pesticides-on-soybean-600nw-653708227.jpg',
-      title: 'News Title 4',
-      description: 'Description of news article 4',
-      author: "Author 4",
-    ),
-  ];*/
-
-  List<FeaturedProducts> products = [
-    FeaturedProducts(
+  //List<NewsArticles> articles = [];
+  final List<Items> products = [
+    Items(
       img:
           'https://www.groundsguys.com/us/en-us/grounds-guys/_assets/expert-tips/Organic-Fertilizer.webp',
       title: 'Ground Fertilizer',
-      price: 'Ksh. 750',
+      price: '750',
+      description:
+          'you can now store and access descriptions for each item. This enables you to provide more comprehensive information about the products in your application.',
     ),
-    FeaturedProducts(
+    Items(
       img:
           'https://www.blfarm.com/wp-content/uploads/2018/02/hero-livestock-feed.jpg',
       title: 'Cattle Feed',
-      price: 'Ksh. 300',
+      price: '300',
+      description:
+          'you can now store and access descriptions for each item. This enables you to provide more comprehensive information about the products in your application.',
     ),
-    FeaturedProducts(
+    Items(
       img: 'https://agromaster.com/public/images/1606924470-0.jpg',
       title: 'Fertilizer Spreader',
-      price: 'Ksh. 15,000',
+      price: '15,000',
+      description:
+          'you can now store and access descriptions for each item. This enables you to provide more comprehensive information about the products in your application.',
     ),
   ];
+
   //late List<NewsArticles> filteredArticles;
 
   /*void filterArticles(String query) {
@@ -84,7 +66,7 @@ class _HomeState extends State<Home> {
   }*/
   Future<void> fetchArticles() async {
     final response = await http.get(Uri.parse(
-        'https://newsapi.org/v2/everything?q=agriculture&pageSize=10&apiKey=18db24f247fa4ac7ace17b952f149403'));
+        'https://newsapi.org/v2/everything?q=farming&pageSize=10&apiKey=18db24f247fa4ac7ace17b952f149403'));
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
       setState(() {
@@ -247,7 +229,14 @@ class _HomeState extends State<Home> {
                           final product = products[index];
                           return GestureDetector(
                             onTap: () {
-                              
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      MarketItemDetailsPage(
+                                    item: product,
+                                  ),
+                                ),
+                              );
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -303,10 +292,10 @@ class _HomeState extends State<Home> {
                                     padding: const EdgeInsets.only(
                                       left: 8.0,
                                       top: 3.0,
-                                      bottom: 5.0,
+                                      //bottom: 5.0,
                                     ),
                                     child: Text(
-                                      product.price,
+                                      "Kshs. ${product.price}",
                                       style: const TextStyle(
                                         fontSize: 9.0,
                                       ),
@@ -321,8 +310,12 @@ class _HomeState extends State<Home> {
                                         top: 8.0,
                                         right: 8.0,
                                       ),
-                                      child: OutlinedButton.icon(
+                                      child: ElevatedButton.icon(
                                           onPressed: () {
+                                            ref
+                                                .read(shoppingCartProvider
+                                                    .notifier)
+                                                .addToCart(product);
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               mySnackBar("Added to Cart!"),
@@ -334,15 +327,19 @@ class _HomeState extends State<Home> {
                                             color: Colors.grey[700],
                                           ),
                                           style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
+                                                Colors.green[300],
+                                              ),
                                               shape: MaterialStateProperty.all(
                                                   RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ))),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ))),
                                           label: Text(
                                             "Add to cart",
                                             style: TextStyle(
-                                              fontSize: 9,
+                                              fontSize: 10,
                                               color: Colors.grey[700],
                                             ),
                                           )),
@@ -386,12 +383,13 @@ class _HomeState extends State<Home> {
                             final article = articles[index];
                             return GestureDetector(
                               onTap: () {
-                                Navigator.of(context).pushReplacement<void, void>(
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext context) =>
-                                       News(articles: article),
-                                ),
-                              );
+                                Navigator.of(context)
+                                    .pushReplacement<void, void>(
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) =>
+                                        News(articles: article),
+                                  ),
+                                );
                               },
                               child: Container(
                                 margin: const EdgeInsets.only(
@@ -400,7 +398,7 @@ class _HomeState extends State<Home> {
                                 ),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  color: Colors.grey[200],
+                                  color: Colors.green[100],
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

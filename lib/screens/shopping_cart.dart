@@ -56,7 +56,7 @@ class _ShoppingCartState extends ConsumerState<ShoppingCart> {
                 final product = widget.cartItems[index];
                 return ListTile(
                   onTap: () {},
-                  isThreeLine: true,
+                  //isThreeLine: true,
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: product.items.img.startsWith("http")
@@ -83,7 +83,7 @@ class _ShoppingCartState extends ConsumerState<ShoppingCart> {
                     ),
                   ),
                   subtitle: Text(
-                    product.items.price,
+                    "Kshs. ${product.items.price}",
                     style: TextStyle(
                       color: Colors.green[200],
                       fontSize: 11,

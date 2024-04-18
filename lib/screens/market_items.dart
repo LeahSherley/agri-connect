@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:agri_tech/models/market_items.dart';
 import 'package:agri_tech/providers/shopping_cart.dart';
 import 'package:agri_tech/widgets/widgets.dart';
@@ -5,11 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MarketItems extends ConsumerStatefulWidget {
-  const MarketItems(
-      {super.key, required this.items, required this.onSelectedItem});
+  const MarketItems({
+    super.key,
+    required this.items,
+    required this.onSelectedItem,
+    this.showDescription = true,
+  });
 
   final Items items;
   final void Function() onSelectedItem;
+  final bool showDescription;
 
   @override
   ConsumerState<MarketItems> createState() => _MarketItemsState();
@@ -41,8 +48,8 @@ class _MarketItemsState extends ConsumerState<MarketItems> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
-              child: Image.network(
-                widget.items.img,
+              child: Image.file(
+                File(widget.items.img),
                 width: double.infinity,
                 height: 61.0,
                 fit: BoxFit.cover,
@@ -78,12 +85,28 @@ class _MarketItemsState extends ConsumerState<MarketItems> {
                 bottom: 10.0,
               ),
               child: Text(
-                widget.items.price,
+                "Kshs. ${widget.items.price}",
                 style: const TextStyle(
                   fontSize: 9.0,
                 ),
               ),
             ),
+           
+            if (!widget
+                .showDescription) 
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 8.0,
+                ),
+                child: Text(
+                  overflow: TextOverflow.ellipsis,
+                  widget.items.description,
+                  style: const TextStyle(
+                    fontSize: 9.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             SizedBox(
               height: 40,
               width: double.infinity,
@@ -93,7 +116,7 @@ class _MarketItemsState extends ConsumerState<MarketItems> {
                   top: 8.0,
                   right: 8.0,
                 ),
-                child: OutlinedButton.icon(
+                child: ElevatedButton.icon(
                     onPressed: () {
                       //addToCart(widget.items);
                       ref
@@ -109,13 +132,16 @@ class _MarketItemsState extends ConsumerState<MarketItems> {
                       color: Colors.grey[700],
                     ),
                     style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                          Colors.green[300],
+                        ),
                         shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ))),
+                          borderRadius: BorderRadius.circular(10),
+                        ))),
                     label: Text(
                       "Add to cart",
                       style: TextStyle(
-                        fontSize: 9,
+                        fontSize: 10,
                         color: Colors.grey[700],
                       ),
                     )),

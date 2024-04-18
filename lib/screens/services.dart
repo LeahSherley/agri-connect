@@ -16,6 +16,7 @@ class Services extends ConsumerStatefulWidget {
 }
 
 class _ServicesState extends ConsumerState<Services> {
+  bool showDescription = true;
   /*final List<Items> allitems = [
     Items(
       img:
@@ -65,7 +66,6 @@ class _ServicesState extends ConsumerState<Services> {
               allitems.add(result);
             });*/
             ref.read(productStateProvider.notifier).addProduct(result);
-             
           }
         },
         label: const Text("Add Product to MarketPlace"),
@@ -96,13 +96,13 @@ class _ServicesState extends ConsumerState<Services> {
               child: scaffoldtext("No Products Available!"),
             )
           : ListView.builder(
+            
               itemCount: allitems.length,
               itemBuilder: (context, index) {
                 var product = allitems[index];
-
                 return ListTile(
                   onTap: () {},
-                  isThreeLine: true,
+                  //isThreeLine: true,
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: product.img.startsWith('http')
@@ -114,7 +114,7 @@ class _ServicesState extends ConsumerState<Services> {
                           )
                         : Image.file(
                             File(product.img),
-                            width: 80,
+                            width: 100,
                             height: 80,
                             fit: BoxFit.cover,
                           ),
@@ -160,29 +160,42 @@ class _ServicesState extends ConsumerState<Services> {
                       ),
                     ],
                   ),
-                  subtitle: Row(
+                  subtitle: Column(
                     children: [
-                      Text(
-                        "Kshs. ${product.price}",
-                        style: TextStyle(
-                          color: Colors.green[200],
-                          fontSize: 11,
+                      Row(
+                        children: [
+                          Text(
+                            "Kshs. ${product.price}",
+                            style: TextStyle(
+                              color: Colors.green[200],
+                              fontSize: 11,
+                            ),
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            onPressed: () {
+                              //deleteItem(product));
+                              ref
+                                  .read(productStateProvider.notifier)
+                                  .removeProduct(product);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                mySnackBar("${product.title} deleted!"),
+                              );
+                            },
+                            icon: const Icon(Icons.delete_outline_rounded,
+                                size: 22),
+                          ),
+                        ],
+                      ),
+                      if (!showDescription)
+                        Text(
+                          product.description,
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 11,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: () {
-                          //deleteItem(product));
-                          ref
-                              .read(productStateProvider.notifier)
-                              .removeProduct(product);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            mySnackBar("${product.title} deleted!"),
-                          );
-                        },
-                        icon:
-                            const Icon(Icons.delete_outline_rounded, size: 22),
-                      ),
                     ],
                   ),
                 );

@@ -17,6 +17,7 @@ class _AddProductState extends State<AddProduct> {
 
   TextEditingController titleController = TextEditingController();
   TextEditingController priceController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
 
   Future<void> getImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -74,9 +75,23 @@ class _AddProductState extends State<AddProduct> {
               ),
               TextField(
                 controller: priceController,
-                keyboardType:TextInputType.number,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  hintText: 'Enter price e.g 100',
+                  hintText: 'Enter price: e.g 100',
+                  hintStyle: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[700],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              mytext(
+                'Description:',
+              ),
+              TextField(
+                controller: descriptionController,
+                decoration: InputDecoration(
+                  hintText: 'Enter product description:',
                   hintStyle: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[700],
@@ -123,9 +138,10 @@ class _AddProductState extends State<AddProduct> {
                   onPressed: () {
                     final productName = titleController.text;
                     final productPrice = priceController.text;
+                    final productDescription = descriptionController.text;
                     File? selectedImage = image;
                     if (image == null ||
-                        titleController.text.isEmpty ||
+                        titleController.text.isEmpty || descriptionController.text.isEmpty||
                         priceController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         mySnackBar("Please Fill all fields!"),
@@ -137,14 +153,15 @@ class _AddProductState extends State<AddProduct> {
                             img: selectedImage!.path,
                             title: productName,
                             price: productPrice,
+                            description: productDescription,
                           ));
                       ScaffoldMessenger.of(context).showSnackBar(
                         mySnackBar("Product Added!"),
                       );
                       titleController.clear();
                       priceController.clear();
+                      descriptionController.clear();
                     }
-                    
                   },
                   icon: const Icon(
                     Icons.agriculture_rounded,

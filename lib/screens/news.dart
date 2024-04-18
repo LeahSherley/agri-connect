@@ -2,23 +2,25 @@ import 'package:agri_tech/models/news_articles.dart';
 import 'package:agri_tech/screens/home_screen.dart';
 import 'package:agri_tech/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class News extends StatefulWidget {
+class News extends ConsumerStatefulWidget {
   const News({super.key, required this.articles});
   final NewsArticles articles;
 
   @override
-  State<News> createState() => _NewsState();
+  ConsumerState<News> createState() => _NewsState();
 }
 
 bool isFavourite = false;
 
-class _NewsState extends State<News> {
+class _NewsState extends ConsumerState<News> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.green[50],
       appBar: AppBar(
         actions: [
           IconButton(
@@ -75,11 +77,12 @@ class _NewsState extends State<News> {
                         children: [
                           Text(
                             widget.articles.title,
-                            maxLines: 2,
+                            maxLines: 3,
+                            textAlign: TextAlign.center,
                             overflow: TextOverflow.ellipsis,
                             softWrap: true,
-                            style: const TextStyle(
-                              color: Colors.grey,
+                            style: TextStyle(
+                              color: Colors.grey[200],
                               fontSize: 12,
                             ),
                           ),
@@ -94,17 +97,17 @@ class _NewsState extends State<News> {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: [
+                /*boxShadow: [
                   BoxShadow(
                     color: Colors.grey.shade300,
                     blurStyle: BlurStyle.normal,
                     spreadRadius: 2,
                     blurRadius: 5,
                   ),
-                ],
+                ],*/
                 gradient: LinearGradient(
                   colors: [
-                    Colors.green[200]!,
+                    Colors.green[100]!,
                     Colors.green[50]!,
                   ],
                   begin: Alignment.bottomCenter,
@@ -119,27 +122,27 @@ class _NewsState extends State<News> {
                     Text(
                       softWrap: true,
                       widget.articles.description,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 11,
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                        fontSize: 14,
                       ),
-                      textAlign: TextAlign.center,
+                      textAlign: TextAlign.justify,
                     ),
                     Text(
                       softWrap: true,
                       widget.articles.content,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 11,
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                        fontSize: 14,
                       ),
-                      textAlign: TextAlign.center,
+                      textAlign: TextAlign.justify,
                     ),
                     const SizedBox(height:10,),
                     Text(
                       softWrap: true,
                       "By: ${widget.articles.author}",
-                      style: const TextStyle(
-                        color: Colors.grey,
+                      style: TextStyle(
+                        color: Colors.grey[700],
                         fontSize: 11,
                         fontWeight: FontWeight.w600
                       ),

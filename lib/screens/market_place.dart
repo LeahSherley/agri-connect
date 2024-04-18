@@ -1,8 +1,10 @@
 import 'package:agri_tech/models/cart_items.dart';
 import 'package:agri_tech/models/market_items.dart';
+import 'package:agri_tech/providers/products.dart';
 import 'package:agri_tech/providers/shopping_cart.dart';
 import 'package:agri_tech/screens/home_screen.dart';
 import 'package:agri_tech/screens/market_items.dart';
+import 'package:agri_tech/screens/product_details.dart';
 import 'package:agri_tech/screens/shopping_cart.dart';
 import 'package:agri_tech/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -17,28 +19,9 @@ class MarketPlace extends ConsumerStatefulWidget {
 
 class _MarketPlaceState extends ConsumerState<MarketPlace> {
   TextEditingController searchController = TextEditingController();
-  bool isLoading = false;
+
   late List<Items> filteredItems;
-  List<CartItem> cartItems = [
-    /* CartItem(
-      items: Items(
-        img:
-            'https://www.groundsguys.com/us/en-us/grounds-guys/_assets/expert-tips/Organic-Fertilizer.webp',
-        title: 'Ground Fertilizer',
-        price: 'Ksh. 750',
-      ),
-      quantity: 2,
-    ),
-    CartItem(
-      items: Items(
-        img:
-            'https://www.blfarm.com/wp-content/uploads/2018/02/hero-livestock-feed.jpg',
-        title: 'Cattle Feed',
-        price: 'Ksh. 300',
-      ),
-      quantity: 1,
-    ),*/
-  ];
+  List<CartItem> cartItems = [];
 
   @override
   void initState() {
@@ -56,11 +39,13 @@ class _MarketPlaceState extends ConsumerState<MarketPlace> {
   }
 
   final List<Items> allitems = [
-    Items(
+   /* Items(
       img:
           'https://www.groundsguys.com/us/en-us/grounds-guys/_assets/expert-tips/Organic-Fertilizer.webp',
       title: 'Ground Fertilizer',
       price: 'Ksh. 750',
+      description:
+          'you can now store and access descriptions for each item. This enables you to provide more comprehensive information about the products in your application.',
     ),
     Items(
       img:
@@ -101,11 +86,12 @@ class _MarketPlaceState extends ConsumerState<MarketPlace> {
           'https://www.blfarm.com/wp-content/uploads/2018/02/hero-livestock-feed.jpg',
       title: 'Cattle Feed',
       price: 'Ksh. 300',
-    ),
+    ),*/
   ];
   @override
   Widget build(BuildContext context) {
     final cartItems = ref.watch(shoppingCartProvider);
+    final filteredItems = ref.watch(productStateProvider);
     return Scaffold(
       backgroundColor: Colors.green[50],
       appBar: AppBar(
@@ -127,30 +113,34 @@ class _MarketPlaceState extends ConsumerState<MarketPlace> {
           },
         ),
       ),
-      body: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(
-              left: 20,
-              right: 18,
-              top: 10,
-            ),
-            height: 40,
-            child: search(
-              "Search Products",
-              searchController,
-              const Icon(
-                Icons.search_rounded,
-                color: Colors.grey,
-              ),
-              filterItems,
-            ),
-          ),
-          /*filteredItems.isEmpty
+      body: filteredItems.isEmpty
+          ? Center(
+              child: scaffoldtext("MarketPlace is empty!"),
+            )
+          : Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(
+                    left: 20,
+                    right: 18,
+                    top: 10,
+                  ),
+                  height: 40,
+                  child: search(
+                    "Search Products",
+                    searchController,
+                    const Icon(
+                      Icons.search_rounded,
+                      color: Colors.grey,
+                    ),
+                    filterItems,
+                  ),
+                ),
+                /*filteredItems.isEmpty
               ? Center(
                   child: scaffoldtext("Marketplace is Empty!"),
                 ) :*/
-               Expanded(
+                Expanded(
                   child: GridView(
                     padding: const EdgeInsets.only(
                       left: 20,
@@ -169,13 +159,20 @@ class _MarketPlaceState extends ConsumerState<MarketPlace> {
                       for (final item in filteredItems)
                         MarketItems(
                           items: item,
-                          onSelectedItem: () {},
+                          onSelectedItem: () {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) =>
+                                    MarketItemDetailsPage(item: item),
+                              ),
+                            );
+                          },
                         ),
                     ],
                   ),
                 ),
-        ],
-      ),
+              ],
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(

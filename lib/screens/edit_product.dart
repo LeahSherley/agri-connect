@@ -6,7 +6,7 @@ import 'package:agri_tech/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
+
 
 class EditProductScreen extends ConsumerStatefulWidget {
   const EditProductScreen({super.key, required this.items});
@@ -19,6 +19,7 @@ class EditProductScreen extends ConsumerStatefulWidget {
 class _EditProductScreenState extends ConsumerState<EditProductScreen> {
   late TextEditingController titleController;
   late TextEditingController priceController;
+  late TextEditingController descriptionController;
   File? _image;
 
   @override
@@ -26,6 +27,7 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
     super.initState();
     titleController = TextEditingController(text: widget.items.title);
     priceController = TextEditingController(text: widget.items.price);
+    descriptionController = TextEditingController(text:widget.items.description);
     _image = File(widget.items.img);
   }
 
@@ -95,6 +97,21 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
               ),
               const SizedBox(height: 16),
               mytext(
+                'Description:',
+              ),
+              TextField(
+                controller: descriptionController,
+                decoration: InputDecoration(
+                  hintText: 'Enter Description',
+                  hintStyle: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[700],
+                  ),
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 16),
+              mytext(
                 'Add Photo:',
               ),
               _image != null
@@ -142,6 +159,7 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
                       img: _image?.path ?? widget.items.img,
                       title: titleController.text,
                       price: priceController.text,
+                      description: descriptionController.text,
                     );
                     ref
                         .read(productStateProvider.notifier)

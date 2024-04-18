@@ -19,27 +19,19 @@ class Community extends ConsumerStatefulWidget {
 
 class _CommunityState extends ConsumerState<Community> {
   List<CommunityPost> post = [
-    /*CommunityPost(
-      id: "1",
+    CommunityPost(
       imgUrl:
           "https://global.unitednations.entermediadb.net/assets/mediadb/services/module/asset/downloads/preset/Libraries/Production+Library/23-03-2022_WHO_Kenya-3.jpg/image1170x530cropped.jpg",
       caption:
           "This is a sample post caption. Everything I prayed for and more!.",
     ),
     CommunityPost(
-      id: "2",
       imgUrl:
           "https://bbeal.com/wp-content/uploads/2022/11/organic-farming-min.jpg",
       caption:
           "This is also a sample post caption of Everything I prayed for and more!.",
     ),
-    CommunityPost(
-      id: "3",
-      imgUrl:
-          "https://www.sudufarming.com/wp-content/uploads/2021/03/Organic-Farming.jpg",
-      caption:
-          "This is another simple post caption about Everything I prayed for and more.!",
-    ),*/
+    
   ];
   List<CommunityPost> favoritePosts = [];
 
@@ -143,98 +135,85 @@ class _CommunityState extends ConsumerState<Community> {
                 ],
               ),
             ),
-            post.isEmpty
-                ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    FractionallySizedBox(
-                      //heightFactor:0,
-                      child: Center(
-                        child: scaffoldtext("Welcome Community Forum!"),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: post.length,
+              itemBuilder: (context, index) {
+                final posts = post[index];
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: posts.imgUrl.startsWith("http")
+                            ? Image.network(
+                                posts.imgUrl,
+                                fit: BoxFit.cover,
+                                height: 150,
+                              )
+                            : Image.file(
+                                File(posts.imgUrl),
+                                height: 150,
+                                fit: BoxFit.cover,
+                              ),
                       ),
-                    ),
-                  ],
-                )
-                : ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: post.length,
-                    itemBuilder: (context, index) {
-                      final posts = post[index];
-                      return Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: posts.imgUrl.startsWith("http")
-                                  ? Image.network(
-                                      posts.imgUrl,
-                                      fit: BoxFit.cover,
-                                      height: 150,
-                                    )
-                                  : Image.file(
-                                      File(posts.imgUrl),
-                                      height: 150,
-                                      fit: BoxFit.cover,
-                                    ),
-                            ),
-                            const SizedBox(height: 8),
+                      const SizedBox(height: 8),
 
-                            Row(
-                              children: [
-                                IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      posts.isLiked = !posts.isLiked;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    posts.isLiked
-                                        ? Icons.favorite
-                                        : Icons.favorite_border,
-                                    color: posts.isLiked
-                                        ? Colors.redAccent
-                                        : Colors.grey[700],
-                                    size: 18,
-                                  ),
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                posts.isLiked = !posts.isLiked;
+                              });
+                            },
+                            icon: Icon(
+                              posts.isLiked
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: posts.isLiked
+                                  ? Colors.redAccent
+                                  : Colors.grey[700],
+                              size: 18,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () async {
+                              await showModalBottomSheet(
+                                //isScrollControlled: true,
+                                backgroundColor: Colors.green[50],
+                                elevation: 0,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(10.0)),
                                 ),
-                                IconButton(
-                                  onPressed: () async {
-                                    await showModalBottomSheet(
-                                      //isScrollControlled: true,
-                                      backgroundColor: Colors.green[50],
-                                      elevation: 0,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(10.0)),
-                                      ),
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return CommentSection(
-                                          postId: posts.id,
-                                        );
-                                      },
-                                    );
-                                  },
-                                  icon: Icon(
-                                    Icons.mode_comment_outlined,
-                                    color: Colors.grey[700],
-                                    size: 18,
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: Icon(
-                                    Icons.share_outlined,
-                                    color: Colors.grey[700],
-                                    size: 18,
-                                  ),
-                                ),
-                                const Spacer(),
-                                /*IconButton(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CommentSection(
+                                    postId: posts.id,
+                                  );
+                                },
+                              );
+                            },
+                            icon: Icon(
+                              Icons.mode_comment_outlined,
+                              color: Colors.grey[700],
+                              size: 18,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.share_outlined,
+                              color: Colors.grey[700],
+                              size: 18,
+                            ),
+                          ),
+                          const Spacer(),
+                          /*IconButton(
                             onPressed: () {
                               /*setState(() {
                                 posts.isFavourite = !posts.isFavourite;
@@ -263,56 +242,55 @@ class _CommunityState extends ConsumerState<Community> {
                               size: 18,
                             ),
                           ),*/
-                                IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      posts.isFavourite = !posts.isFavourite;
-                                      if (posts.isFavourite) {
-                                        favoritePosts.add(posts);
-                                      } else {
-                                        favoritePosts.remove(posts);
-                                      }
-                                    });
-                                    /*ref
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                posts.isFavourite = !posts.isFavourite;
+                                if (posts.isFavourite) {
+                                  favoritePosts.add(posts);
+                                } else {
+                                  favoritePosts.remove(posts);
+                                }
+                              });
+                              /*ref
                                   .read(favoritePostsProvider.notifier)
                                   .toggleFavorite(posts);*/
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      mySnackBar(posts.isFavourite
-                                          ? "Added to favorites!"
-                                          : "Removed from favorites!"),
-                                    );
-                                  },
-                                  icon: Icon(
-                                    posts.isFavourite
-                                        ? Icons.bookmark
-                                        : Icons.bookmark_border,
-                                    color: posts.isFavourite
-                                        ? Colors.amber
-                                        : Colors.grey[700],
-                                    size: 18,
-                                  ),
-                                ),
-                              ],
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                mySnackBar(posts.isFavourite
+                                    ? "Added to favorites!"
+                                    : "Removed from favorites!"),
+                              );
+                            },
+                            icon: Icon(
+                              posts.isFavourite
+                                  ? Icons.bookmark
+                                  : Icons.bookmark_border,
+                              color: posts.isFavourite
+                                  ? Colors.amber
+                                  : Colors.grey[700],
+                              size: 18,
                             ),
-                            // Post caption
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(
-                                posts.caption,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[700],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Divider(),
-                          ],
+                          ),
+                        ],
+                      ),
+                      // Post caption
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          posts.caption,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[700],
+                          ),
                         ),
-                      );
-                    },
-                  )
+                      ),
+                      const SizedBox(height: 8),
+                      const Divider(),
+                    ],
+                  ),
+                );
+              },
+            )
           ],
         ),
       ),

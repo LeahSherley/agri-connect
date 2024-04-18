@@ -1,4 +1,5 @@
 import 'package:agri_tech/models/market_items.dart';
+import 'package:agri_tech/models/products.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProductStateNotifier extends StateNotifier<List<Items>> {
@@ -30,3 +31,4 @@ class ProductStateNotifier extends StateNotifier<List<Items>> {
 final productStateProvider =
     StateNotifierProvider<ProductStateNotifier, List<Items>>(
         (ref) => ProductStateNotifier());
+        

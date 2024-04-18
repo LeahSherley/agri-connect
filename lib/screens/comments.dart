@@ -4,7 +4,6 @@ import 'package:agri_tech/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 class CommentSection extends ConsumerStatefulWidget {
   const CommentSection({Key? key, required this.postId}) : super(key: key);
   final String postId;
@@ -63,12 +62,16 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                     itemBuilder: (context, index) {
                       final comment = postComments[index];
                       return ListTile(
-                        leading: const CircleAvatar(
-                          backgroundColor: Colors.green,
-                        ),
+                        leading: CircleAvatar(
+                            child: Icon(
+                          Icons.account_circle_rounded,
+                          color: Colors.grey[700],
+                        )),
                         title: Text(
                           "User ${index + 1}",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[700]),
                         ),
                         subtitle: Text(
                           comment.commentInfo,
@@ -119,6 +122,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                             postId: widget.postId,
                           ),
                         );
+                    commentController.clear();
                   },
                 ),
               ],
