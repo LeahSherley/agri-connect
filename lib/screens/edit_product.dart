@@ -1,30 +1,40 @@
 import 'dart:io';
 
 import 'package:agri_tech/models/market_items.dart';
+import 'package:agri_tech/providers/products.dart';
 import 'package:agri_tech/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
-class AddProduct extends StatefulWidget {
-  const AddProduct({super.key});
+class EditProductScreen extends ConsumerStatefulWidget {
+  const EditProductScreen({super.key, required this.items});
+  final Items items;
 
   @override
-  State<AddProduct> createState() => _AddProductState();
+  ConsumerState<EditProductScreen> createState() => _EditProductScreenState();
 }
 
-class _AddProductState extends State<AddProduct> {
-  File? image;
+class _EditProductScreenState extends ConsumerState<EditProductScreen> {
+  late TextEditingController titleController;
+  late TextEditingController priceController;
+  File? _image;
 
-  TextEditingController titleController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    titleController = TextEditingController(text: widget.items.title);
+    priceController = TextEditingController(text: widget.items.price);
+    _image = File(widget.items.img);
+  }
 
-  Future<void> getImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: source);
-
+  Future<void> _getImageFromGallery() async {
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       setState(() {
-        image = File(pickedImage.path);
+        _image = File(pickedImage.path);
       });
     }
   }
@@ -39,7 +49,7 @@ class _AddProductState extends State<AddProduct> {
           backgroundColor: Colors.green[50],
           automaticallyImplyLeading: false,
           title: scaffoldtext(
-            'Add Product',
+            'Edit Product',
           ),
           leading: IconButton(
             icon: const Icon(
@@ -74,21 +84,27 @@ class _AddProductState extends State<AddProduct> {
               ),
               TextField(
                 controller: priceController,
-                keyboardType:TextInputType.number,
                 decoration: InputDecoration(
-                  hintText: 'Enter price e.g 100',
+                  hintText: 'Enter Price eg. 100',
                   hintStyle: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[700],
                   ),
                 ),
+                keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16),
               mytext(
                 'Add Photo:',
               ),
-              image == null
-                  ? Container(
+              _image != null
+                  ? Image.file(
+                      _image!,
+                      width: double.infinity,
+                      height: 150,
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
                       width: double.infinity,
                       height: 150,
                       margin: const EdgeInsets.all(16),
@@ -99,7 +115,7 @@ class _AddProductState extends State<AddProduct> {
                       child: Center(
                         child: IconButton(
                           onPressed: () {
-                            getImage(ImageSource.gallery);
+                            _getImageFromGallery();
                           },
                           icon: const Icon(
                             Icons.photo,
@@ -107,12 +123,6 @@ class _AddProductState extends State<AddProduct> {
                           ),
                         ),
                       ),
-                    )
-                  : Image.file(
-                      image!,
-                      width: double.infinity,
-                      height: 150,
-                      fit: BoxFit.cover,
                     ),
               const SizedBox(height: 20),
               Container(
@@ -121,37 +131,34 @@ class _AddProductState extends State<AddProduct> {
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   onPressed: () {
-                    final productName = titleController.text;
-                    final productPrice = priceController.text;
-                    File? selectedImage = image;
-                    if (image == null ||
-                        titleController.text.isEmpty ||
-                        priceController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        mySnackBar("Please Fill all fields!"),
-                      );
-                    } else {
-                      Navigator.pop(
-                          context,
-                          Items(
-                            img: selectedImage!.path,
-                            title: productName,
-                            price: productPrice,
-                          ));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        mySnackBar("Product Added!"),
-                      );
-                      titleController.clear();
-                      priceController.clear();
-                    }
-                    
+                    /*Navigator.pop(
+                        context,
+                        Items(
+                          img: _image?.path ?? widget.items.img,
+                          title: titleController.text,
+                          price: priceController.text,
+                        ));*/
+                    final editedProduct = Items(
+                      img: _image?.path ?? widget.items.img,
+                      title: titleController.text,
+                      price: priceController.text,
+                    );
+                    ref
+                        .read(productStateProvider.notifier)
+                        .editProduct(editedProduct);
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(mySnackBar("Product Edited!"));
+                    Navigator.pop(context);
+
+                    titleController.clear();
+                    priceController.clear();
                   },
                   icon: const Icon(
-                    Icons.agriculture_rounded,
+                    Icons.edit_note_rounded,
                     color: Colors.grey,
                     size: 20,
                   ),
-                  label: mytext("Add Product"),
+                  label: mytext("Save"),
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all(
                       RoundedRectangleBorder(

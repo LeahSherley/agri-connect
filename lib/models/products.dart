@@ -4,7 +4,6 @@ class FeaturedProducts {
   final String price;
 
   FeaturedProducts({
-    
     required this.img,
     required this.title,
     required this.price,

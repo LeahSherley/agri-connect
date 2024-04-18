@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:agri_tech/providers/products.dart';
+import 'package:agri_tech/providers/shopping_cart.dart';
 import 'package:agri_tech/screens/add_product.dart';
+import 'package:agri_tech/screens/edit_product.dart';
 import 'package:agri_tech/screens/home_screen.dart';
 import 'package:agri_tech/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -63,6 +65,7 @@ class _ServicesState extends ConsumerState<Services> {
               allitems.add(result);
             });*/
             ref.read(productStateProvider.notifier).addProduct(result);
+             
           }
         },
         label: const Text("Add Product to MarketPlace"),
@@ -95,7 +98,7 @@ class _ServicesState extends ConsumerState<Services> {
           : ListView.builder(
               itemCount: allitems.length,
               itemBuilder: (context, index) {
-                final product = allitems[index];
+                var product = allitems[index];
 
                 return ListTile(
                   onTap: () {},
@@ -127,6 +130,26 @@ class _ServicesState extends ConsumerState<Services> {
                       ),
                       const Spacer(),
                       GestureDetector(
+                        onTap: () async {
+                          final result = await showModalBottomSheet(
+                            isScrollControlled: true,
+                            backgroundColor: Colors.green[50],
+                            elevation: 0,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(10.0)),
+                            ),
+                            context: context,
+                            builder: (BuildContext context) {
+                              return EditProductScreen(items: product);
+                            },
+                          );
+                          if (result != null) {
+                            ref
+                                .read(productStateProvider.notifier)
+                                .editProduct(result);
+                          }
+                        },
                         child: Text(
                           "Edit",
                           style: TextStyle(
@@ -140,7 +163,7 @@ class _ServicesState extends ConsumerState<Services> {
                   subtitle: Row(
                     children: [
                       Text(
-                        product.price,
+                        "Kshs. ${product.price}",
                         style: TextStyle(
                           color: Colors.green[200],
                           fontSize: 11,

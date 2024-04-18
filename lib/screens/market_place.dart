@@ -17,9 +17,10 @@ class MarketPlace extends ConsumerStatefulWidget {
 
 class _MarketPlaceState extends ConsumerState<MarketPlace> {
   TextEditingController searchController = TextEditingController();
+  bool isLoading = false;
   late List<Items> filteredItems;
   List<CartItem> cartItems = [
-   /* CartItem(
+    /* CartItem(
       items: Items(
         img:
             'https://www.groundsguys.com/us/en-us/grounds-guys/_assets/expert-tips/Organic-Fertilizer.webp',
@@ -145,29 +146,34 @@ class _MarketPlaceState extends ConsumerState<MarketPlace> {
               filterItems,
             ),
           ),
-          Expanded(
-            child: GridView(
-              padding: const EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: 20,
-                bottom: 20,
-              ),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 15,
-                mainAxisExtent: 166,
-              ),
-              children: [
-                for (final item in filteredItems)
-                  MarketItems(
-                    items: item,
-                    onSelectedItem: () {},
+          /*filteredItems.isEmpty
+              ? Center(
+                  child: scaffoldtext("Marketplace is Empty!"),
+                ) :*/
+               Expanded(
+                  child: GridView(
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      top: 20,
+                      bottom: 20,
+                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 15,
+                      crossAxisSpacing: 15,
+                      mainAxisExtent: 166,
+                    ),
+                    children: [
+                      for (final item in filteredItems)
+                        MarketItems(
+                          items: item,
+                          onSelectedItem: () {},
+                        ),
+                    ],
                   ),
-              ],
-            ),
-          ),
+                ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

@@ -1,4 +1,3 @@
-
 import 'package:agri_tech/models/market_items.dart';
 import 'package:agri_tech/providers/shopping_cart.dart';
 import 'package:agri_tech/widgets/widgets.dart';
@@ -47,6 +46,16 @@ class _MarketItemsState extends ConsumerState<MarketItems> {
                 width: double.infinity,
                 height: 61.0,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 61,
+                    color: Colors.grey[300],
+                    child: const Center(
+                        child: Icon(
+                      Icons.image_not_supported_rounded,
+                    )),
+                  );
+                },
               ),
             ),
             Padding(

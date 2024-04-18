@@ -12,8 +12,18 @@ class ProductStateNotifier extends StateNotifier<List<Items>> {
       state = [...state, item];
     }
   }
-  void removeProduct(Items item){
-     state = state.where((i) => i.id != item.id).toList();
+
+  void removeProduct(Items item) {
+    state = state.where((i) => i.id != item.id).toList();
+  }
+
+  void editProduct(Items editedItems) {
+    state = state.map((items) {
+      if (items.id == editedItems.id) {
+        return editedItems;
+      }
+      return items;
+    }).toList();
   }
 }
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:agri_tech/models/cart_items.dart';
 import 'package:agri_tech/providers/shopping_cart.dart';
 import 'package:agri_tech/screens/home_screen.dart';
@@ -9,14 +11,12 @@ class ShoppingCart extends ConsumerStatefulWidget {
   const ShoppingCart({super.key, required this.cartItems});
 
   final List<CartItem> cartItems;
-  
 
   @override
   ConsumerState<ShoppingCart> createState() => _ShoppingCartState();
 }
 
 class _ShoppingCartState extends ConsumerState<ShoppingCart> {
-
   /*void removeCart(CartItem itemToRemove) {
     setState(() {
       widget.cartItems
@@ -58,13 +58,23 @@ class _ShoppingCartState extends ConsumerState<ShoppingCart> {
                   onTap: () {},
                   isThreeLine: true,
                   leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        width: 80,
-                        height: 80,
-                        product.items.img,
-                        fit: BoxFit.cover,
-                      )),
+                    borderRadius: BorderRadius.circular(10),
+                    child: product.items.img.startsWith("http")
+                        ? Image.network(
+                            width: 80,
+                            height: 80,
+                            product.items.img,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.file(
+                            fit: BoxFit.cover,
+                            width: 80,
+                            height: 80,
+                            File(
+                              product.items.img,
+                            ),
+                          ),
+                  ),
                   title: Text(
                     product.items.title,
                     style: TextStyle(
@@ -89,8 +99,9 @@ class _ShoppingCartState extends ConsumerState<ShoppingCart> {
                       IconButton(
                           onPressed: () {
                             //removeCart(product);
-                            ref.read(shoppingCartProvider.notifier)
-                             .removeCart(product.items);
+                            ref
+                                .read(shoppingCartProvider.notifier)
+                                .removeCart(product.items);
                             ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
                                 "${product.items.title} removed from cart!"));
                           },

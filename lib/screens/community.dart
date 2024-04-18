@@ -148,8 +148,11 @@ class _CommunityState extends ConsumerState<Community> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Center(
-                      child: scaffoldtext("Welcome Community Forum!"),
+                    FractionallySizedBox(
+                      //heightFactor:0,
+                      child: Center(
+                        child: scaffoldtext("Welcome Community Forum!"),
+                      ),
                     ),
                   ],
                 )
