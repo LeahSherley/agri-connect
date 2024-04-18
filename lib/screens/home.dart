@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:agri_tech/models/news_articles.dart';
 import 'package:agri_tech/models/products.dart';
 import 'package:agri_tech/screens/main_drawer.dart';
 import 'package:agri_tech/screens/market_place.dart';
+import 'package:agri_tech/screens/news.dart';
 import 'package:agri_tech/screens/notification_list.dart';
 import 'package:agri_tech/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -16,32 +20,37 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final scaffoldkey = GlobalKey<ScaffoldState>();
   TextEditingController searchController = TextEditingController();
-  List<NewsArticles> articles = [
+  late List<NewsArticles> articles = [];
+  /*List<NewsArticles> articles = [
     NewsArticles(
       imageUrl:
           'https://www.farmafrica.org/images/blogs/juliet-and-goats-kenya.jpg',
       title: 'News Title 1',
       description: 'Description of news article 1',
+      author: "Author 5",
     ),
     NewsArticles(
       imageUrl:
           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA9hGApixKyGfKLQpU3JV1WjU-J9T3XyL86awxO9oKRUejlp5_FzO73iW78BF3ioVfBY4&usqp=CAU',
       title: 'News Title 2',
       description: 'Description of news article 2',
+      author: "Author 4",
     ),
     NewsArticles(
       imageUrl:
           'https://media.licdn.com/dms/image/C5612AQHTZ8u04G8cgg/article-inline_image-shrink_400_744/0/1617441359282?e=1717632000&v=beta&t=RHsE5TfwTrrMX-BB27oH49DlaHEPiDCqmsjYJmYtSuo',
       title: 'News Title 3',
       description: 'Description of news article 3',
+      author: "Author 3",
     ),
     NewsArticles(
       imageUrl:
           'https://www.shutterstock.com/image-photo/tractor-spraying-pesticides-on-soybean-600nw-653708227.jpg',
       title: 'News Title 4',
       description: 'Description of news article 4',
+      author: "Author 4",
     ),
-  ];
+  ];*/
 
   List<FeaturedProducts> products = [
     FeaturedProducts(
@@ -62,9 +71,9 @@ class _HomeState extends State<Home> {
       price: 'Ksh. 15,000',
     ),
   ];
-  late List<NewsArticles> filteredArticles;
+  //late List<NewsArticles> filteredArticles;
 
-  void filterArticles(String query) {
+  /*void filterArticles(String query) {
     setState(() {
       filteredArticles = articles
           .where((article) =>
@@ -72,12 +81,26 @@ class _HomeState extends State<Home> {
               article.description.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
+  }*/
+  Future<void> fetchArticles() async {
+    final response = await http.get(Uri.parse(
+        'https://newsapi.org/v2/everything?q=agriculture&pageSize=10&apiKey=18db24f247fa4ac7ace17b952f149403'));
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      setState(() {
+        articles = List<NewsArticles>.from(jsonData['articles']
+            .map((article) => NewsArticles.fromJson(article)));
+      });
+    } else {
+      throw Exception('Failed to load articles');
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    filteredArticles = articles;
+    //filteredArticles = articles;
+    fetchArticles();
   }
 
   @override
@@ -165,7 +188,7 @@ class _HomeState extends State<Home> {
                           Icons.search_rounded,
                           color: Colors.grey,
                         ),
-                        filterArticles,
+                        //filterArticles,
                       )),
                 ],
               ),
@@ -223,7 +246,9 @@ class _HomeState extends State<Home> {
                         itemBuilder: (context, index) {
                           final product = products[index];
                           return GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              
+                            },
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
@@ -237,7 +262,7 @@ class _HomeState extends State<Home> {
                                 ),
                               ),
                               margin: const EdgeInsets.only(right: 16),
-                              width: 145,
+                              width: 140,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -248,6 +273,17 @@ class _HomeState extends State<Home> {
                                       width: double.infinity,
                                       height: 65.0,
                                       fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Container(
+                                          height: 61,
+                                          color: Colors.grey[300],
+                                          child: const Center(
+                                              child: Icon(
+                                            Icons.image_not_supported_rounded,
+                                          )),
+                                        );
+                                      },
                                     ),
                                   ),
                                   Padding(
@@ -287,7 +323,6 @@ class _HomeState extends State<Home> {
                                       ),
                                       child: OutlinedButton.icon(
                                           onPressed: () {
-                                            
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               mySnackBar("Added to Cart!"),
@@ -312,9 +347,7 @@ class _HomeState extends State<Home> {
                                             ),
                                           )),
                                     ),
-                                    
                                   ),
-                                  
                                 ],
                               ),
                             ),
@@ -335,67 +368,103 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Agriculture News",
+                    "News Feed",
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: Colors.green[300],
                     ),
                   ),
-                  ListView.builder(
-                      shrinkWrap: true,
-                      physics: const ClampingScrollPhysics(),
-                      itemCount: articles.length,
-                      itemBuilder: (context, index) {
-                        final article = articles[index];
-                        return GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                            margin: const EdgeInsets.only(
-                              bottom: 16.0,
-                              top: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              color: Colors.grey[200],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
+                  articles.isEmpty
+                      ? const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2))
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const ClampingScrollPhysics(),
+                          itemCount: articles.length,
+                          itemBuilder: (context, index) {
+                            final article = articles[index];
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pushReplacement<void, void>(
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) =>
+                                       News(articles: article),
+                                ),
+                              );
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(
+                                  bottom: 16.0,
+                                  top: 10,
+                                ),
+                                decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  child: Image.network(
-                                    article.imageUrl,
-                                    width: double.infinity,
-                                    height: 120.0,
-                                    fit: BoxFit.cover,
-                                  ),
+                                  color: Colors.grey[200],
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    article.title,
-                                    style: const TextStyle(
-                                      fontSize: 14.0,
-                                      fontWeight: FontWeight.bold,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      child: Image.network(
+                                        article.urlToImage,
+                                        width: double.infinity,
+                                        height: 120.0,
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return Container(
+                                            height: 120,
+                                            color: Colors.grey[200],
+                                            child: Center(
+                                                child: Icon(
+                                              Icons.image_not_supported_rounded,
+                                              color: Colors.green[700],
+                                            )),
+                                          );
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    article.description,
-                                    style: const TextStyle(
-                                      fontSize: 12.0,
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        article.title,
+                                        style: TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.bold,
+                                          overflow: TextOverflow.ellipsis,
+                                          color: Colors.grey[700],
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        article.description,
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                          overflow: TextOverflow.ellipsis,
+                                          color: Colors.grey[700],
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        "By: ${article.author}",
+                                        style: TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey[700],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                
-                              ],
-                            ),
-                          ),
-                        );
-                      }),
+                              ),
+                            );
+                          }),
                 ],
               ),
             ),
