@@ -7,6 +7,10 @@ class CommentsNotifier extends StateNotifier<List<Comments>> {
   void addComment(Comments comment) {
     state.add(comment);
   }
+
+  void setComments(List<Comments> comments){
+    state = comments;
+  }
 }
 
 

@@ -2,8 +2,7 @@ import 'dart:convert';
 
 import 'package:agri_tech/models/market_items.dart';
 import 'package:agri_tech/models/news_articles.dart';
-import 'package:agri_tech/models/products.dart';
-import 'package:agri_tech/providers/products.dart';
+
 import 'package:agri_tech/providers/shopping_cart.dart';
 import 'package:agri_tech/screens/main_drawer.dart';
 import 'package:agri_tech/screens/market_place.dart';
@@ -11,6 +10,8 @@ import 'package:agri_tech/screens/news.dart';
 import 'package:agri_tech/screens/notification_list.dart';
 import 'package:agri_tech/screens/product_details.dart';
 import 'package:agri_tech/widgets/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -25,6 +26,7 @@ class Home extends ConsumerStatefulWidget {
 class _HomeState extends ConsumerState<Home> {
   final scaffoldkey = GlobalKey<ScaffoldState>();
   TextEditingController searchController = TextEditingController();
+  late String _username = "";
   late List<NewsArticles> articles = [];
   //List<NewsArticles> articles = [];
   final List<Items> products = [
@@ -83,6 +85,25 @@ class _HomeState extends ConsumerState<Home> {
     super.initState();
     //filteredArticles = articles;
     fetchArticles();
+    _getUserInfo();
+  }
+
+  void _getUserInfo() async {
+    try {
+      final User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final userData = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        final username = userData.data()!['username'];
+        setState(() {
+          _username = username;
+        });
+      }
+    } catch (error) {
+      print(error);
+    }
   }
 
   @override
@@ -135,11 +156,11 @@ class _HomeState extends ConsumerState<Home> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                 Row(
                     children: [
                       Text(
-                        "Hello user!",
-                        style: TextStyle(
+                        "Hello $_username!",
+                        style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 28,
                           fontWeight: FontWeight.w500,

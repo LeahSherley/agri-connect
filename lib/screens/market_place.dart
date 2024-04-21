@@ -7,6 +7,8 @@ import 'package:agri_tech/screens/market_items.dart';
 import 'package:agri_tech/screens/product_details.dart';
 import 'package:agri_tech/screens/shopping_cart.dart';
 import 'package:agri_tech/widgets/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,12 +23,15 @@ class _MarketPlaceState extends ConsumerState<MarketPlace> {
   TextEditingController searchController = TextEditingController();
 
   late List<Items> filteredItems;
-  List<CartItem> cartItems = [];
+  final List<Items> allitems = [];
+  bool isLoading = false;
+  //List<CartItem> cartItems = [];
 
   @override
   void initState() {
     super.initState();
     filteredItems = allitems;
+    fetchProducts();
   }
 
   void filterItems(String query) {
@@ -38,56 +43,35 @@ class _MarketPlaceState extends ConsumerState<MarketPlace> {
     });
   }
 
-  final List<Items> allitems = [
-   /* Items(
-      img:
-          'https://www.groundsguys.com/us/en-us/grounds-guys/_assets/expert-tips/Organic-Fertilizer.webp',
-      title: 'Ground Fertilizer',
-      price: 'Ksh. 750',
-      description:
-          'you can now store and access descriptions for each item. This enables you to provide more comprehensive information about the products in your application.',
-    ),
-    Items(
-      img:
-          'https://www.blfarm.com/wp-content/uploads/2018/02/hero-livestock-feed.jpg',
-      title: 'Cattle Feed',
-      price: 'Ksh. 300',
-    ),
-    Items(
-      img: 'https://agromaster.com/public/images/1606924470-0.jpg',
-      title: 'Fertilizer Spreader',
-      price: 'Ksh. 15,000',
-    ),
-    Items(
-      img:
-          'https://www.groundsguys.com/us/en-us/grounds-guys/_assets/expert-tips/Organic-Fertilizer.webp',
-      title: 'Ground Fertilizer',
-      price: 'Ksh. 750',
-    ),
-    Items(
-      img:
-          'https://www.blfarm.com/wp-content/uploads/2018/02/hero-livestock-feed.jpg',
-      title: 'Cattle Feed',
-      price: 'Ksh. 300',
-    ),
-    Items(
-      img: 'https://agromaster.com/public/images/1606924470-0.jpg',
-      title: 'Fertilizer Spreader',
-      price: 'Ksh. 15,000',
-    ),
-    Items(
-      img:
-          'https://www.groundsguys.com/us/en-us/grounds-guys/_assets/expert-tips/Organic-Fertilizer.webp',
-      title: 'Ground Fertilizer',
-      price: 'Ksh. 750',
-    ),
-    Items(
-      img:
-          'https://www.blfarm.com/wp-content/uploads/2018/02/hero-livestock-feed.jpg',
-      title: 'Cattle Feed',
-      price: 'Ksh. 300',
-    ),*/
-  ];
+  Future<void> fetchProducts() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final productsSnapshot =
+          await FirebaseFirestore.instance.collection('products').get();
+      final List<Items> products = productsSnapshot.docs.map((doc) {
+        return Items(
+          img: doc['imageUrl'] ?? '',
+          title: doc['name'] ?? '',
+          price: doc['price'] ?? '',
+          description: doc['description'] ?? '',
+        );
+      }).toList();
+
+      ref.read(productStateProvider.notifier).setProduct(products);
+
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      //print('Error fetching products: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cartItems = ref.watch(shoppingCartProvider);
@@ -113,66 +97,68 @@ class _MarketPlaceState extends ConsumerState<MarketPlace> {
           },
         ),
       ),
-      body: filteredItems.isEmpty
-          ? Center(
-              child: scaffoldtext("MarketPlace is empty!"),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2.0,
+              ),
             )
-          : Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(
-                    left: 20,
-                    right: 18,
-                    top: 10,
-                  ),
-                  height: 40,
-                  child: search(
-                    "Search Products",
-                    searchController,
-                    const Icon(
-                      Icons.search_rounded,
-                      color: Colors.grey,
-                    ),
-                    filterItems,
-                  ),
-                ),
-                /*filteredItems.isEmpty
+          : filteredItems.isEmpty
               ? Center(
-                  child: scaffoldtext("Marketplace is Empty!"),
-                ) :*/
-                Expanded(
-                  child: GridView(
-                    padding: const EdgeInsets.only(
-                      left: 20,
-                      right: 20,
-                      top: 20,
-                      bottom: 20,
-                    ),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 15,
-                      crossAxisSpacing: 15,
-                      mainAxisExtent: 166,
-                    ),
-                    children: [
-                      for (final item in filteredItems)
-                        MarketItems(
-                          items: item,
-                          onSelectedItem: () {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute<void>(
-                                builder: (BuildContext context) =>
-                                    MarketItemDetailsPage(item: item),
-                              ),
-                            );
-                          },
+                  child: scaffoldtext("MarketPlace is empty!"),
+                )
+              : Column(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(
+                        left: 20,
+                        right: 18,
+                        top: 10,
+                      ),
+                      height: 40,
+                      child: search(
+                        "Search Products",
+                        searchController,
+                        const Icon(
+                          Icons.search_rounded,
+                          color: Colors.grey,
                         ),
-                    ],
-                  ),
+                        filterItems,
+                      ),
+                    ),
+                    Expanded(
+                      child: GridView(
+                        padding: const EdgeInsets.only(
+                          left: 20,
+                          right: 20,
+                          top: 20,
+                          bottom: 20,
+                        ),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 15,
+                          crossAxisSpacing: 15,
+                          childAspectRatio: 0.7,
+                        ),
+                        children: [
+                          for (final item in filteredItems)
+                            MarketItems(
+                              items: item,
+                              onSelectedItem: () {
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) =>
+                                        MarketItemDetailsPage(item: item),
+                                  ),
+                                );
+                              },
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(

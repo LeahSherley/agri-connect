@@ -1,7 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:agri_tech/models/community.dart';
 import 'package:agri_tech/widgets/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -19,12 +24,45 @@ class _AddPostState extends State<AddPost> {
 
   Future<void> getImage(ImageSource source) async {
     final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: source);
+    final pickedImage = await picker.pickImage(
+      source: source,
+      imageQuality: 50,
+    );
 
     if (pickedImage != null) {
       setState(() {
         image = File(pickedImage.path);
       });
+    }
+  }
+
+  Future<String?> uploadImageToFirebaseStorage(File imageFile) async {
+    try {
+      final User? user = FirebaseAuth.instance.currentUser;
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('community_images')
+          .child('${user!.uid}_${DateTime.now().millisecondsSinceEpoch}.jpg');
+      await storageRef.putFile(imageFile);
+      final imageUrl = await storageRef.getDownloadURL();
+      return imageUrl;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  void addPostToFirestore(String imageUrl, String caption) async {
+    try {
+      final User? user = FirebaseAuth.instance.currentUser;
+      await FirebaseFirestore.instance.collection('posts').add({
+        'userId': user!.uid,
+        'imageUrl': imageUrl,
+        'caption': caption,
+        'isLiked': false,
+        'isFavorite': false,
+      });
+    } catch (error) {
+      print("$error");
     }
   }
 
@@ -104,7 +142,7 @@ class _AddPostState extends State<AddPost> {
                 height: 40,
                 width: double.infinity,
                 child: OutlinedButton.icon(
-                  onPressed: () {
+                  onPressed: () async {
                     final caption = captionController.text;
                     File? selectedImage = image;
                     if (image == null || captionController.text.isEmpty) {
@@ -112,12 +150,18 @@ class _AddPostState extends State<AddPost> {
                         mySnackBar("Please Fill all fields!"),
                       );
                     } else {
+                      final imageUrl =
+                          await uploadImageToFirebaseStorage(selectedImage!);
                       Navigator.pop(
                           context,
                           CommunityPost(
-                            imgUrl: selectedImage!.path,
+                            imgUrl: selectedImage.path,
                             caption: caption,
                           ));
+                      addPostToFirestore(
+                        imageUrl!,
+                        caption,
+                      );
                       ScaffoldMessenger.of(context).showSnackBar(
                         mySnackBar("Post Added to community!"),
                       );

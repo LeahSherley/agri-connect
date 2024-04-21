@@ -46,7 +46,7 @@ class _MarketItemDetailsPageState extends State<MarketItemDetailsPage> {
                   child: Image.network(
                     widget.item.img,
                     width: double.infinity,
-                    height: 150.0,
+                    height: 200.0,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(

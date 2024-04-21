@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:agri_tech/models/market_items.dart';
 import 'package:agri_tech/providers/shopping_cart.dart';
 import 'package:agri_tech/widgets/widgets.dart';
@@ -48,22 +47,37 @@ class _MarketItemsState extends ConsumerState<MarketItems> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
-              child: Image.file(
-                File(widget.items.img),
-                width: double.infinity,
-                height: 61.0,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 61,
-                    color: Colors.grey[300],
-                    child: const Center(
-                        child: Icon(
-                      Icons.image_not_supported_rounded,
-                    )),
-                  );
-                },
-              ),
+              child: widget.items.img.startsWith('http')
+                  ? Image.network(
+                      widget.items.img,
+                      width: double.infinity,
+                      height: 110.0,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 110,
+                          color: Colors.grey[300],
+                          child: Center(
+                              child: Icon(Icons.image_not_supported_rounded,
+                                  color: Colors.grey[700])),
+                        );
+                      },
+                    )
+                  : Image.file(
+                      File(widget.items.img),
+                      width: double.infinity,
+                      height: 110.0,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 110,
+                          color: Colors.grey[300],
+                          child: Center(
+                              child: Icon(Icons.image_not_supported_rounded,
+                                  color: Colors.grey[700])),
+                        );
+                      },
+                    ),
             ),
             Padding(
               padding: const EdgeInsets.only(
@@ -91,9 +105,7 @@ class _MarketItemsState extends ConsumerState<MarketItems> {
                 ),
               ),
             ),
-           
-            if (!widget
-                .showDescription) 
+            if (!widget.showDescription)
               Padding(
                 padding: const EdgeInsets.only(
                   left: 8.0,

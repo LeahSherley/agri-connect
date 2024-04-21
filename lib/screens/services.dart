@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:agri_tech/providers/products.dart';
-import 'package:agri_tech/providers/shopping_cart.dart';
+
 import 'package:agri_tech/screens/add_product.dart';
 import 'package:agri_tech/screens/edit_product.dart';
 import 'package:agri_tech/screens/home_screen.dart';

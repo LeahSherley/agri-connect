@@ -14,6 +14,10 @@ class ForumPostsNotifier extends StateNotifier<List<CommunityPost>> {
       state = [...state, post];
     }
   }
+
+  void setPost(List<CommunityPost> post) {
+    state = post;
+  }
 }
 
 final forumPostsProvider =

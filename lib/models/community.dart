@@ -2,7 +2,7 @@ import 'package:uuid/uuid.dart';
 
 const uuid = Uuid();
 
-class CommunityPost{
+class CommunityPost {
   final String imgUrl;
   final String caption;
   final String id;
@@ -12,7 +12,10 @@ class CommunityPost{
   CommunityPost({
     required this.imgUrl,
     required this.caption,
+    String? id,
     this.isLiked = false,
     this.isFavourite = false,
-  }): id = uuid.v4();
+  }) : id = id ?? uuid.v4();
+
+  
 }

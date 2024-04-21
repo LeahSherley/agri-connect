@@ -26,6 +26,10 @@ class ProductStateNotifier extends StateNotifier<List<Items>> {
       return items;
     }).toList();
   }
+
+  void setProduct(List<Items> items) {
+    state = items;
+  }
 }
 
 final productStateProvider =

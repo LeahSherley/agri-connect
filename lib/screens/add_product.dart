@@ -1,7 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:agri_tech/models/market_items.dart';
 import 'package:agri_tech/widgets/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -27,6 +32,40 @@ class _AddProductState extends State<AddProduct> {
       setState(() {
         image = File(pickedImage.path);
       });
+    }
+  }
+
+  Future<String?> uploadImageToFirebaseStorage(File imageFile) async {
+    try {
+      final User? user = FirebaseAuth.instance.currentUser;
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('product_images')
+          .child('${user!.uid}_${DateTime.now().millisecondsSinceEpoch}.jpg');
+
+      await storageRef.putFile(imageFile);
+      final imageUrl = await storageRef.getDownloadURL();
+      return imageUrl;
+    } catch (error) {
+
+      return null;
+    }
+  }
+
+  void addProductToFirestore(String productName, String productPrice,
+      String productDescription, String imageUrl) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser!;
+      await FirebaseFirestore.instance.collection('products').add({
+        'userId': user.uid,
+        'name': productName,
+        'price': productPrice,
+        'description': productDescription,
+        'imageUrl': imageUrl,
+      });
+      //print('Product added to Firestore');
+    } catch (e) {
+      //print('Error adding product to Firestore: $e');
     }
   }
 
@@ -135,28 +174,39 @@ class _AddProductState extends State<AddProduct> {
                 height: 40,
                 width: double.infinity,
                 child: OutlinedButton.icon(
-                  onPressed: () {
+                  onPressed: () async {
                     final productName = titleController.text;
                     final productPrice = priceController.text;
                     final productDescription = descriptionController.text;
                     File? selectedImage = image;
                     if (image == null ||
-                        titleController.text.isEmpty || descriptionController.text.isEmpty||
+                        titleController.text.isEmpty ||
+                        descriptionController.text.isEmpty ||
                         priceController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         mySnackBar("Please Fill all fields!"),
                       );
                     } else {
-                      Navigator.pop(
-                          context,
-                          Items(
-                            img: selectedImage!.path,
-                            title: productName,
-                            price: productPrice,
-                            description: productDescription,
-                          ));
+                      final imageUrl =
+                          await uploadImageToFirebaseStorage(selectedImage!);
+                      if (image != null) {
+                        Navigator.pop(
+                            context,
+                            Items(
+                              img: selectedImage.path,
+                              title: productName,
+                              price: productPrice,
+                              description: productDescription,
+                            ));
+                        addProductToFirestore(
+                          productName,
+                          productPrice,
+                          productDescription,
+                          imageUrl!,
+                        );
+                      }
                       ScaffoldMessenger.of(context).showSnackBar(
-                        mySnackBar("Product Added!"),
+                        mySnackBar("$productName Added!"),
                       );
                       titleController.clear();
                       priceController.clear();
