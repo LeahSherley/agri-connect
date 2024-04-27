@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:agri_tech/models/cart_items.dart';
 import 'package:agri_tech/providers/shopping_cart.dart';
 import 'package:agri_tech/screens/shopping_cart.dart';
+import 'package:agri_tech/widgets/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -77,7 +78,64 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
       print(error);
     }
   }
-
+  void _showHelpModal(BuildContext context) {
+    showModalBottomSheet(
+      backgroundColor: Colors.green[50],
+      useSafeArea:true,
+      isScrollControlled: true,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'About',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[500],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Welcome to AgriConnect! A market place for smallholder farmers aimed at empowering them by providing access to essential agricultural resources and services',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[700],
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'If you have any questions or encounter any issues, please feel free to contact our support team at randikileah@gmail.com.',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[700],
+                ),
+              ),
+              const SizedBox(height: 10),
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[100],
+                    // Set the text color
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                  child: mytext('Close'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     final List<CartItem> cartItems = ref.watch(shoppingCartProvider);
@@ -141,12 +199,14 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
                 'About',
                 selectionColor: Colors.green,
               ),
-              onTap: () {}),
+              onTap: () {
+                _showHelpModal(context);
+              }),
           const Divider(
             indent: 7.0,
             endIndent: 7.0,
           ),
-          ListTile(
+          /*ListTile(
             visualDensity: const VisualDensity(
               horizontal: 0,
               vertical: -1.8,
@@ -168,7 +228,7 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
           const Divider(
             indent: 7.0,
             endIndent: 7.0,
-          ),
+          ),*/
           ListTile(
               visualDensity: const VisualDensity(
                 horizontal: 0,

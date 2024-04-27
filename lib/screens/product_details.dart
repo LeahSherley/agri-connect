@@ -105,6 +105,7 @@ class _MarketItemDetailsPageState extends State<MarketItemDetailsPage> {
                     ),
                     onPressed: () async {
                       final result = await showModalBottomSheet(
+                        useSafeArea: true,
                         isScrollControlled: true,
                         backgroundColor: Colors.green[50],
                         elevation: 0,

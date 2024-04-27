@@ -5,6 +5,7 @@ import 'package:agri_tech/screens/add_product.dart';
 import 'package:agri_tech/screens/edit_product.dart';
 import 'package:agri_tech/screens/home_screen.dart';
 import 'package:agri_tech/widgets/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -42,6 +43,20 @@ class _ServicesState extends ConsumerState<Services> {
     });
   }*/
 
+
+  void deleteProductFromFirestore(String productId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('products')
+          .doc(productId)
+          .delete();
+
+      //print('Product deleted successfully!');
+    } catch (e) {
+      //print('Error deleting product: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final allitems = ref.watch(productStateProvider);
@@ -50,6 +65,7 @@ class _ServicesState extends ConsumerState<Services> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           final result = await showModalBottomSheet(
+            useSafeArea: true,
             isScrollControlled: true,
             backgroundColor: Colors.green[50],
             elevation: 0,
@@ -96,7 +112,6 @@ class _ServicesState extends ConsumerState<Services> {
               child: scaffoldtext("No Products Available!"),
             )
           : ListView.builder(
-            
               itemCount: allitems.length,
               itemBuilder: (context, index) {
                 var product = allitems[index];
@@ -132,6 +147,7 @@ class _ServicesState extends ConsumerState<Services> {
                       GestureDetector(
                         onTap: () async {
                           final result = await showModalBottomSheet(
+                            useSafeArea: true,
                             isScrollControlled: true,
                             backgroundColor: Colors.green[50],
                             elevation: 0,
@@ -145,9 +161,10 @@ class _ServicesState extends ConsumerState<Services> {
                             },
                           );
                           if (result != null) {
-                            ref
+                            /*ref
                                 .read(productStateProvider.notifier)
-                                .editProduct(result);
+                                .editProduct(result);*/
+                            setState(() {});
                           }
                         },
                         child: Text(
@@ -175,6 +192,7 @@ class _ServicesState extends ConsumerState<Services> {
                           IconButton(
                             onPressed: () {
                               //deleteItem(product));
+                              deleteProductFromFirestore(product.id);
                               ref
                                   .read(productStateProvider.notifier)
                                   .removeProduct(product);

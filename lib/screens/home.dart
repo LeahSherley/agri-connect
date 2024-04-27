@@ -36,7 +36,7 @@ class _HomeState extends ConsumerState<Home> {
       title: 'Ground Fertilizer',
       price: '750',
       description:
-          'you can now store and access descriptions for each item. This enables you to provide more comprehensive information about the products in your application.',
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at magna non elit tristique tempor. Integer ac fermentum enim. Donec eget ligula vel ligula lacinia fringilla. Aliquam scelerisque nisi sit amet justo vestibulum, id dapibus eros malesuada. Ut ac sapien id diam posuere luctus a id mi. Suspendisse potenti. Mauris feugiat, nisi nec sagittis tincidunt, lacus leo accumsan felis, nec lobortis felis elit nec tortor. Cras pharetra pretium nulla, vitae tristique felis lacinia ut. Aliquam sed vestibulum justo. Vivamus eleifend lacus libero, sed tempus ipsum scelerisque non. Integer varius, eros id tempor venenatis, justo arcu dignissim metus, ut feugiat metus nisl nec velit. Suspendisse sit amet sapien nisi. Sed eu est a urna efficitur vehicula. Sed sodales, quam eget accumsan congue, elit quam lacinia arcu, vitae scelerisque nunc erat a magna. Nunc nec nunc id justo rhoncus pretium.',
     ),
     Items(
       img:
@@ -44,14 +44,14 @@ class _HomeState extends ConsumerState<Home> {
       title: 'Cattle Feed',
       price: '300',
       description:
-          'you can now store and access descriptions for each item. This enables you to provide more comprehensive information about the products in your application.',
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at magna non elit tristique tempor. Integer ac fermentum enim. Donec eget ligula vel ligula lacinia fringilla. Aliquam scelerisque nisi sit amet justo vestibulum, id dapibus eros malesuada. Ut ac sapien id diam posuere luctus a id mi. Suspendisse potenti. Mauris feugiat, nisi nec sagittis tincidunt, lacus leo accumsan felis, nec lobortis felis elit nec tortor. Cras pharetra pretium nulla, vitae tristique felis lacinia ut. Aliquam sed vestibulum justo. Vivamus eleifend lacus libero, sed tempus ipsum scelerisque non. Integer varius, eros id tempor venenatis, justo arcu dignissim metus, ut feugiat metus nisl nec velit. Suspendisse sit amet sapien nisi. Sed eu est a urna efficitur vehicula. Sed sodales, quam eget accumsan congue, elit quam lacinia arcu, vitae scelerisque nunc erat a magna. Nunc nec nunc id justo rhoncus pretium.',
     ),
     Items(
       img: 'https://agromaster.com/public/images/1606924470-0.jpg',
       title: 'Fertilizer Spreader',
       price: '15,000',
       description:
-          'you can now store and access descriptions for each item. This enables you to provide more comprehensive information about the products in your application.',
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at magna non elit tristique tempor. Integer ac fermentum enim. Donec eget ligula vel ligula lacinia fringilla. Aliquam scelerisque nisi sit amet justo vestibulum, id dapibus eros malesuada. Ut ac sapien id diam posuere luctus a id mi. Suspendisse potenti. Mauris feugiat, nisi nec sagittis tincidunt, lacus leo accumsan felis, nec lobortis felis elit nec tortor. Cras pharetra pretium nulla, vitae tristique felis lacinia ut. Aliquam sed vestibulum justo. Vivamus eleifend lacus libero, sed tempus ipsum scelerisque non. Integer varius, eros id tempor venenatis, justo arcu dignissim metus, ut feugiat metus nisl nec velit. Suspendisse sit amet sapien nisi. Sed eu est a urna efficitur vehicula. Sed sodales, quam eget accumsan congue, elit quam lacinia arcu, vitae scelerisque nunc erat a magna. Nunc nec nunc id justo rhoncus pretium.',
     ),
   ];
 
