@@ -5,7 +5,7 @@ a market place for smallholder farmers aimed at empowering them by providing acc
 ## Tech Stack
 
 - **Flutter**: Cross-platform UI toolkit
-- **Firebase**: Backend services (authentication, storage and database)
+- **Firebase**: Backend services (authentication, storage, messaging and database)
 - **Dart**: Programming language used with Flutter
 
 
@@ -13,7 +13,12 @@ a market place for smallholder farmers aimed at empowering them by providing acc
 
 ![Login](/app_screenshots/screenshots/Screenshot_20240428-113125.jpg)
 ![Sign Up](/app_screenshots/screenshots/Screenshot_20240428-113226.jpg)
+![Home](/app_screenshots/screenshots/Screenshot_20240428-113549.jpg)
+![Notifications](/app_screenshots/screenshots/Screenshot_20240428-113659.jpg)
+![Shopping Cart](/app_screenshots/screenshots/Screenshot_20240428-114333.jpg)
+![MarketPlace](/app_screenshots/screenshots/Screenshot_20240428-152307.jpg)
+![Drawer](/app_screenshots/screenshots/Screenshot_20240428-113652.jpg)
+![MyProducts](/app_screenshots/screenshots/Screenshot_20240428-152550.jpg)
 ![Community](/app_screenshots/screenshots/Screenshot_20240428-113305.jpg)
-![Comments](/app_screenshots/screenshots/Screenshot_20240428-113315.jpg)
 
 
