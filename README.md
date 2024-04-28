@@ -1,21 +1,19 @@
-<<<<<<< HEAD
-# agri_tech
+# agriConnect
 
-A new Flutter project.
+a market place for smallholder farmers aimed at empowering them by providing access to essential agricultural resources and services.
 
-## Getting Started
+## Tech Stack
 
-This project is a starting point for a Flutter application.
+- **Flutter**: Cross-platform UI toolkit
+- **Firebase**: Backend services (authentication, storage and database)
+- **Dart**: Programming language used with Flutter
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Screenshots
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
-# agri-tech
-a market place for smallholder farmers aimed at empowering them by providing access to essential agricultural resources and services
->>>>>>> 50cea383541370efc4273eb3368d62c27cf7197a
+![Login](/app_screenshots/screenshots/Screenshot_20240428-113125.jpg)
+![Sign Up](/app_screenshots/screenshots/Screenshot_20240428-113226.jpg)
+![Community](/app_screenshots/screenshots/Screenshot_20240428-113305.jpg)
+![Comments](/app_screenshots/screenshots/Screenshot_20240428-113315.jpg)
+
+
